@@ -7,8 +7,8 @@
 
 import Foundation
 
-fileprivate struct NilOptionalError<T>: Error, CustomStringConvertible {
-    let _description: String
+public struct NilError<T>: Error, CustomStringConvertible {
+    private let _description: String
     
     init(optional: Optional<T>) {
         _description = "Nil returned for optional of type: \(T.self)"
@@ -18,7 +18,7 @@ fileprivate struct NilOptionalError<T>: Error, CustomStringConvertible {
         _description = "Nil returned for optional of type: \(T.self) at \(file) line: \(line)"
     }
     
-    var description: String {
+    public var description: String {
         return _description
     }
 }
@@ -29,7 +29,7 @@ public extension Optional {
     func unwrap(file: String = #file,
                 line: Int = #line) throws -> Wrapped {
         guard let unwrapped = self else {
-            throw NilOptionalError(optional: self,
+            throw NilError(optional: self,
                                    file: file,
                                    line: line)
         }
@@ -38,7 +38,7 @@ public extension Optional {
     
     static prefix func ?? (optional: Optional) throws -> Wrapped {
         guard let unwrapped = optional else {
-            throw NilOptionalError(optional: optional)
+            throw NilError(optional: optional)
         }
         return unwrapped
     }
